@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+<!--Tiitle Block-->
+{%block title%}
+<title>Product</title>
+{%endblock title%}
+
+<!--Comtent Block-->
+{%block content%}
+<section class="p-5">
+  <div id="row" class="row p-4"></div>
+</section>
+
+{%endblock content%}
+
+<!--JavaSript Tags-->
+{% block script %}
+<script>
+  var eventSource = new EventSource("{% url 'product' %}");
+
+  eventSource.onmessage = function (e) {
+    console.log(e);
+    final_data = JSON.parse(e.data);
+    content = "";
+
+    final_data.forEach(function (item) {
+      content += buildPostContent(item["item"], item["desc"], item["price"]);
+    });
+    document.getElementById("row").innerHTML = content;
+    console.log(content);
+    //alert("${item}" + "Added");
+  };
+
+  eventSource.onerror = function (e) {
+    console.log(`error ${e}`);
+  };
+
+  function buildPostContent(item, desc, price) {
+    content = `<div class="col-md-3 mb-2">
+
+                <div class="card p-2">
+                <div>
+                  <h5>${item}</h5>
+                  <p> ${desc} </p>
+                </div>
+               <div class="bg-light text-secondary text-center m-0 row">
+                <div class="col-sm-6">
+                   <p class="mt-2">Price: ${price}</p>
+                </div>
+                <div class="col-sm-6">
+                  <button onClick="notifyAlert('${item}')" class="btn btn-sm btn-purple"> <i class="fas fa-cart-plus"></i> </button>
+                </div>
+
+               </div>
+               </div>
+               </div>`;
+    return content;
+  }
+
+  function notifyAlert(title) {
+    toastr.success("has been Added to cart", title);
+  }
+</script>
+{% endblock script %}
