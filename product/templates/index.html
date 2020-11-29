@@ -18,16 +18,14 @@
   var eventSource = new EventSource("{% url 'product' %}");
 
   eventSource.onmessage = function (e) {
-    console.log(e);
     final_data = JSON.parse(e.data);
+    toastr.info("New product has arrived", final_data.item);
     content = "";
 
     final_data.forEach(function (item) {
       content += buildPostContent(item["item"], item["desc"], item["price"]);
     });
     document.getElementById("row").innerHTML = content;
-    console.log(content);
-    //alert("${item}" + "Added");
   };
 
   eventSource.onerror = function (e) {
